@@ -1,0 +1,14 @@
+name: MazaiCalc
+main: mazaicrafty\calc\Main
+version: 1.0
+api:
+ - 3.0.0-ALPHA11
+ - 3.0.0-ALPHA12
+ - 3.0.0
+load: POSTWORLD
+author: MazaiCrafty
+website: https://github.com/MazaiCrafty/MazaiCalc
+commands:
+ calc:
+  usage: "/calc"
+  description: "open calc form"
