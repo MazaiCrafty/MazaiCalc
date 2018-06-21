@@ -22,6 +22,10 @@ class Main extends PluginBase{
     const SUBTRACTION = 2;
     const MULTIPLICATION = 3;
     const DIVISION = 4;
+    const PI = 5;
+    const COS = 6;
+    const SIN = 7;
+    const TAN = 8;
 
     private $form_api;
 
@@ -75,6 +79,25 @@ class Main extends PluginBase{
                     $result = Process::division($temp_num, $input_num);
                     Temp::tempNum($result, $player);
                     break;
+
+                    case Main::PI:
+                    Temp::tempNum(3.14159265358979, $player);
+                    break;
+
+                    case Main::COS:
+                    $result = Process::cos(Temp::$temp[$player->getName()]);
+                    Temp::tempNum($result, $player);
+                    break;
+
+                    case Main::SIN:
+                    $result = Process::sin(Temp::$temp[$player->getName()]);
+                    Temp::tempNum($result, $player);
+                    break;
+
+                    case Main::TAN:
+                    $result = Process::tan(Temp::$temp[$player->getName()]);
+                    Temp::tempNum($result, $player);
+                    break;
                 }
 
                 if ($data === 0){
@@ -84,11 +107,15 @@ class Main extends PluginBase{
             }
         );
 
-        $arithmetic[] = 'C';
+        $arithmetic[] = Temp::$temp[$player->getName()] === 0 ? 'CA' : 'C';
         $arithmetic[] = '+';
         $arithmetic[] = '-';
         $arithmetic[] = '×';
         $arithmetic[] = '/';
+        $arithmetic[] = 'π';
+        $arithmetic[] = 'cos';
+        $arithmetic[] = 'sin';
+        $arithmetic[] = 'tan';
 
         $form->setTitle("MazaiCalc");
         $form->addInput((string) Temp::$temp[$player->getName()]);
