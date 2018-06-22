@@ -7,22 +7,65 @@
 
 namespace mazaicrafty\calc;
 
+use \Exception;
+use pocketmine\Player;
+
 class Process{
 
-    public static function addition($temp, $num){
-        return $temp + $num;
+    public static function addition($temp, $num, Player $player){
+        try{
+            if (!(preg_match("/^[0-9]+$/", $num))){
+                throw new Exception(0);
+                return;
+            }
+
+            return $temp + $num;
+        }
+        catch (Exception $e){
+            Temp::tempNum($e->getMessage(), $player);
+        }
     }
     
-    public static function subtraction($temp, $num){
-        return $temp - $num;
+    public static function subtraction($temp, $num, Player $player){
+        try{
+            if (!(preg_match("/^[0-9]+$/", $num))){
+                throw new Exception(0);
+                return;
+            }
+
+            return $temp - $num;
+        }
+        catch (Exception $e){
+            Temp::tempNum($e->getMessage(), $player);
+        }
     }
 
-    public static function multiplication($temp, $num){
-        return $temp * $num;
+    public static function multiplication($temp, $num, Player $player){
+        try{
+            if (!(preg_match("/^[0-9]+$/", $num))){
+                throw new Exception(0);
+                return;
+            }
+
+            return $temp * $num;
+        }
+        catch (Exception $e){
+            Temp::tempNum($e->getMessage(), $player);
+        }
     }
 
-    public static function division($temp, $num){
-        return $temp / $num;
+    public static function division($temp, $num, Player $player){
+        try{
+            if (!(preg_match("/^[0-9]+$/", $num))){
+                throw new Exception(0);
+                return;
+            }
+
+            return $temp / $num;
+        }
+        catch (Exception $e){
+            Temp::tempNum($e->getMessage(), $player);
+        }
     }
 
     public static function cos($temp){

@@ -53,30 +53,44 @@ class Main extends PluginBase{
             function (Player $player, $data){
                 if ($data === null) return;
                 $input_num = $data[0];
+                $type = $data[1];
+/*
+                if (!($type ===
+                    Main::CLEAR ||
+                    Main::PI ||
+                    Main::COS ||
+                    Main::SIN ||
+                    Main::TAN)){
+                    if (preg_match("/[a-zA-Z]+$/", $input_num)){
+                        $player->sendMessage("全て半角数字で入力しなければなりません");
+                        return;
+                    }
+                }*/
+                
                 $temp_num = Temp::$temp[$player->getName()];
 
-                switch ($data[1]){
+                switch ($type){
                     case Main::CLEAR:
                     Temp::tempNum(0, $player);
                     break;
 
                     case Main::ADDITION:
-                    $result = Process::addition($temp_num, $input_num);
+                    $result = Process::addition($temp_num, $input_num, $player);
                     Temp::tempNum($result, $player);
                     break;
 
                     case Main::SUBTRACTION:
-                    $result = Process::subtraction($temp_num, $input_num);
+                    $result = Process::subtraction($temp_num, $input_num, $player);
                     Temp::tempNum($result, $player);
                     break;
 
                     case Main::MULTIPLICATION:
-                    $result = Process::multiplication($temp_num, $input_num);
+                    $result = Process::multiplication($temp_num, $input_num, $player);
                     Temp::tempNum($result, $player);
                     break;
 
                     case Main::DIVISION:
-                    $result = Process::division($temp_num, $input_num);
+                    $result = Process::division($temp_num, $input_num, $player);
                     Temp::tempNum($result, $player);
                     break;
 
@@ -107,6 +121,14 @@ class Main extends PluginBase{
             }
         );
 
+        if (isset(Temp::$temp[$player->getName()])){
+            $print = Temp::$temp[$player->getName()];
+        }
+        else{
+            Temp::tempNum(0, $player);
+            $print = Temp::$temp[$player->getName()];
+        }
+
         $arithmetic[] = Temp::$temp[$player->getName()] === 0 ? 'CA' : 'C';
         $arithmetic[] = '+';
         $arithmetic[] = '-';
@@ -118,7 +140,7 @@ class Main extends PluginBase{
         $arithmetic[] = 'tan';
 
         $form->setTitle("MazaiCalc");
-        $form->addInput((string) Temp::$temp[$player->getName()]);
+        $form->addInput($print);
         $form->addDropdown("type", $arithmetic);
         $form->sendToPlayer($player);
     }
