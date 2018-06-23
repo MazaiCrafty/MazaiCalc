@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
 * The MIT License
 * Copyright (c) 2018 MazaiCrafty
@@ -13,7 +15,7 @@ use pocketmine\Player;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
-use mazaicrafty\calc\Process;
+use mazaicrafty\calc\Calculate;
 
 class Main extends PluginBase{
 
@@ -48,88 +50,80 @@ class Main extends PluginBase{
         }
     }
 
-    public function createCalc(Player $player){
+    public function createCalc(Player $player): void{
         $form = $this->form_api->createCustomForm(
             function (Player $player, $data){
                 if ($data === null) return;
-                $input_num = $data[0];
                 $type = $data[1];
-/*
-                if (!($type ===
-                    Main::CLEAR ||
-                    Main::PI ||
-                    Main::COS ||
-                    Main::SIN ||
-                    Main::TAN)){
-                    if (preg_match("/[a-zA-Z]+$/", $input_num)){
-                        $player->sendMessage("全て半角数字で入力しなければなりません");
-                        return;
-                    }
-                }*/
-                
-                $temp_num = Temp::$temp[$player->getName()];
+                $input_num = $data[0];
+                $saved_num = Save::$num[$player->getName()];
+
+                if (!(ctype_digit("$input_num"))){
+                    $player->sendMessage("全て数字で入力しなければなりません");
+                    return;
+                }
 
                 switch ($type){
                     case Main::CLEAR:
-                    Temp::tempNum(0, $player);
+                    Save::saveNumber(0, $player);
                     break;
 
                     case Main::ADDITION:
-                    $result = Process::addition($temp_num, $input_num, $player);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::addition($saved_num, $input_num);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::SUBTRACTION:
-                    $result = Process::subtraction($temp_num, $input_num, $player);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::subtraction($saved_num, $input_num);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::MULTIPLICATION:
-                    $result = Process::multiplication($temp_num, $input_num, $player);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::multiplication($saved_num, $input_num);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::DIVISION:
-                    $result = Process::division($temp_num, $input_num, $player);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::division($saved_num, $input_num);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::PI:
-                    Temp::tempNum(3.14159265358979, $player);
+                    Save::saveNumber(3.14159265358979, $player);
                     break;
 
                     case Main::COS:
-                    $result = Process::cos(Temp::$temp[$player->getName()]);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::cos(Save::$num[$player->getName()]);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::SIN:
-                    $result = Process::sin(Temp::$temp[$player->getName()]);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::cos(Save::$num[$player->getName()]);
+                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::TAN:
-                    $result = Process::tan(Temp::$temp[$player->getName()]);
-                    Temp::tempNum($result, $player);
+                    $result = Calculate::tan(Save::$num[$player->getName()]);
+                    Save::saveNumber($result, $player);
                     break;
                 }
 
-                if ($data === 0){
-                    Temp::tempNum(0, $player);
+                if ($data === 0) {
+                    Save::saveNumber(0, $player);
                 }
                 $this->reCallForm($player);
             }
         );
 
-        if (isset(Temp::$temp[$player->getName()])){
-            $print = Temp::$temp[$player->getName()];
+        if (isset(Save::$num[$player->getName()])){
+            $print = Save::$num[$player->getName()];
         }
         else{
-            Temp::tempNum(0, $player);
-            $print = Temp::$temp[$player->getName()];
+            Save::saveNumber(0, $player);
+            $print = Save::$num[$player->getName()];
         }
 
-        $arithmetic[] = Temp::$temp[$player->getName()] === 0 ? 'CA' : 'C';
+        $arithmetic[] = Save::$num[$player->getName()] === 0 ? 'CA' : 'C';
         $arithmetic[] = '+';
         $arithmetic[] = '-';
         $arithmetic[] = '×';
@@ -140,21 +134,21 @@ class Main extends PluginBase{
         $arithmetic[] = 'tan';
 
         $form->setTitle("MazaiCalc");
-        $form->addInput($print);
+        $form->addInput((string) $print);
         $form->addDropdown("type", $arithmetic);
         $form->sendToPlayer($player);
     }
 
-    public function reCallForm(Player $player){
+    public function reCallForm(Player $player): void{
         $this->createCalc($player);
     }
 }
 
-class Temp{
+class Save{
 
-    public static $temp;
+    public static $num;
 
-    public static function tempNum($num = 0, Player $player){
-        self::$temp[$player->getName()] = $num;
+    public static function saveNumber($num = 0, Player $player): void{
+        self::$num[$player->getName()] = $num;
     }
 }
