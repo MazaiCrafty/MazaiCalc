@@ -7,7 +7,9 @@
 
 namespace mazaicrafty\calc;
 
-class Calculate{
+use mazaicrafty\calc\interfaces\iCalculable;
+
+class Calculate implements iCalculable{
 
     public static function addition($saved_num, $input_num){
         return $saved_num + $input_num;

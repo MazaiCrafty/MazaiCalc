@@ -58,10 +58,17 @@ class Main extends PluginBase{
                 $input_num = $data[0];
                 $saved_num = Save::$num[$player->getName()];
 
-                if (!(ctype_digit("$input_num"))){
-                    $player->sendMessage("全て数字で入力しなければなりません");
-                    return;
+                if (!($type ===
+                Main::PI ||
+                Main::COS ||
+                Main::SIN ||
+                Main::TAN)){
+                    if (!(ctype_digit("$input_num"))){
+                        $player->sendMessage("全て数字で入力しなければなりません");
+                        return;
+                    }                    
                 }
+
 
                 switch ($type){
                     case Main::CLEAR:
