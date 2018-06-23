@@ -16,9 +16,13 @@ interface iCalculable{
 
     public static function division($saved_num, $input_num);
 
-    public static function cos($saved_num);
+    public static function cos($num);
 
-    public static function sin($saved_num);
+    public static function sin($num);
 
-    public static function tan($saved_num);
+    public static function tan($num);
+
+    public static function square($num);
+
+    public static function squareRoot($num);
 }

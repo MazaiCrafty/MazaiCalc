@@ -15,6 +15,8 @@ use pocketmine\Player;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
+use pocketmine\utils\Config;
+
 use mazaicrafty\calc\Calculate;
 
 class Main extends PluginBase{
@@ -28,10 +30,16 @@ class Main extends PluginBase{
     const COS = 6;
     const SIN = 7;
     const TAN = 8;
+    const SQUARE = 9;
+    const SQRT = 10;
+    const CBRT = 11;
 
     private $form_api;
 
     public function onEnable(): void{
+        $this->saveResource("Config.yml");
+
+        $this->config = new Config($this->getDataFolder() . "Config.yml", Config::YAML);
         $this->form_api = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
     }
 
@@ -42,7 +50,7 @@ class Main extends PluginBase{
                 $sender->sendMessage("Please execute this command in-game");
                 return true;
             }
-            $this->createCalc($sender);
+            $this->createForm($sender);
             return true;
 
             default:
@@ -50,74 +58,70 @@ class Main extends PluginBase{
         }
     }
 
-    public function createCalc(Player $player): void{
+    public function createForm(Player $player): void{
         $form = $this->form_api->createCustomForm(
             function (Player $player, $data){
                 if ($data === null) return;
                 $type = $data[1];
-                $input_num = $data[0];
+                $input_num = (float) $data[0];
                 $saved_num = Save::$num[$player->getName()];
 
-                if (!($type ===
-                Main::PI ||
-                Main::COS ||
-                Main::SIN ||
-                Main::TAN)){
-                    if (!(ctype_digit("$input_num"))){
-                        $player->sendMessage("全て数字で入力しなければなりません");
+                if (!(empty($input_num))){
+                    if (!(is_numeric($input_num))){
+                        $player->sendMessage($this->config->get("NUMERIC"));
                         return;
-                    }                    
+                    }                   
                 }
-
 
                 switch ($type){
                     case Main::CLEAR:
-                    Save::saveNumber(0, $player);
+                    $result = 0;
                     break;
 
                     case Main::ADDITION:
                     $result = Calculate::addition($saved_num, $input_num);
-                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::SUBTRACTION:
                     $result = Calculate::subtraction($saved_num, $input_num);
-                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::MULTIPLICATION:
                     $result = Calculate::multiplication($saved_num, $input_num);
-                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::DIVISION:
                     $result = Calculate::division($saved_num, $input_num);
-                    Save::saveNumber($result, $player);
                     break;
 
                     case Main::PI:
-                    Save::saveNumber(3.14159265358979, $player);
+                    $result = 3.14159265358979;
                     break;
 
                     case Main::COS:
-                    $result = Calculate::cos(Save::$num[$player->getName()]);
-                    Save::saveNumber($result, $player);
+                    $result = Calculate::cos(!empty($input_num) ? $input_num : $saved_num);
                     break;
 
                     case Main::SIN:
-                    $result = Calculate::cos(Save::$num[$player->getName()]);
-                    Save::saveNumber($result, $player);
+                    $result = Calculate::cos(!empty($input_num) ? $input_num : $saved_num);
                     break;
 
                     case Main::TAN:
-                    $result = Calculate::tan(Save::$num[$player->getName()]);
-                    Save::saveNumber($result, $player);
+                    $result = Calculate::tan(!empty($input_num) ? $input_num : $saved_num);
+                    break;
+
+                    case Main::SQUARE:
+                    $result = Calculate::square(!empty($input_num) ? $input_num : $saved_num);
+                    break;
+
+                    case Main::SQRT:
+                    $result = Calculate::squareRoot(!empty($input_num) ? $input_num : $saved_num);
                     break;
                 }
-
-                if ($data === 0) {
+                if ($data === 0){
                     Save::saveNumber(0, $player);
                 }
+                Save::saveNumber($result, $player);
                 $this->reCallForm($player);
             }
         );
@@ -139,15 +143,18 @@ class Main extends PluginBase{
         $arithmetic[] = 'cos';
         $arithmetic[] = 'sin';
         $arithmetic[] = 'tan';
+        $arithmetic[] = 'ⅹ²';
+        //$arithmetic[] = 'ⅹ³';
+        $arithmetic[] = '²√';
 
-        $form->setTitle("MazaiCalc");
+        $form->setTitle($this->config->get("TITLE"));
         $form->addInput((string) $print);
-        $form->addDropdown("type", $arithmetic);
+        $form->addDropdown($this->config->get("DROPDOWN"), $arithmetic);
         $form->sendToPlayer($player);
     }
 
     public function reCallForm(Player $player): void{
-        $this->createCalc($player);
+        $this->createForm($player);
     }
 }
 

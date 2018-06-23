@@ -27,15 +27,23 @@ class Calculate implements iCalculable{
         return $saved_num / $input_num;
     }
 
-    public static function cos($saved_num){
-        return cos($saved_num);
+    public static function cos($num){
+        return cos($num);
     }
 
-    public static function sin($saved_num){
-        return sin($saved_num);
+    public static function sin($num){
+        return sin($num);
     }
 
-    public static function tan($saved_num){
-        return tan($saved_num);
+    public static function tan($num){
+        return tan($num);
+    }
+
+    public static function square($num){
+        return $num * $num;
+    }
+
+    public static function squareRoot($num){
+        return sqrt($num);
     }
 }
