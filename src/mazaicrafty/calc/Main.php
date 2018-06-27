@@ -119,7 +119,7 @@ class Main extends PluginBase{
                     break;
                 }
                 if ($data === 0){
-                    Save::saveNumber(0, $player);
+                    $result = 0;
                 }
                 Save::saveNumber($result, $player);
                 $this->reCallForm($player);
