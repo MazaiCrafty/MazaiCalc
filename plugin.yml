@@ -8,6 +8,8 @@ api:
 load: POSTWORLD
 author: MazaiCrafty
 website: https://github.com/MazaiCrafty/MazaiCalc
+depend:
+ - FormAPI #jojoe77777/FormAPI
 commands:
  calc:
   usage: "/calc"
